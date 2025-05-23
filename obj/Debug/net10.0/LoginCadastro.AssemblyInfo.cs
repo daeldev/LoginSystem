@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoginCadastro")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41761f5072a9319a8d8bdce8e249284f23666891")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+383148b3bbd8f876367a638b1bae3a3ddf8abe41")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoginCadastro")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoginCadastro")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

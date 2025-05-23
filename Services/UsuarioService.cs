@@ -1,11 +1,16 @@
+using System.Threading.Tasks.Dataflow;
+
 public class UsuarioService
 {
-    UsuarioModel usuarioCadastrado;
+    private List<UsuarioModel> usuariosCadastrados = new List<UsuarioModel>();
+    private int proximoId = 1;
     public bool Cadastrar(string usuario, string senha, GeneroUsuario genero)
     {
         try
         {
-            usuarioCadastrado = new UsuarioModel(1, usuario, senha, genero);
+            UsuarioModel novoUsuario = new UsuarioModel(proximoId, usuario, senha, genero);
+            usuariosCadastrados.Add(novoUsuario);
+            proximoId++;
             return true;
         }
         catch (Exception e)
@@ -15,45 +20,70 @@ public class UsuarioService
         }
     }
 
-    public bool Logar(string usuario, string senha)
+    public int? Logar(string usuario, string senha)
     {
         try
         {
-            if (usuarioCadastrado.Usuario == usuario && usuarioCadastrado.Senha == senha)
+            // Varre toda a lista buscando um usuário
+            foreach (var usuarioModel in usuariosCadastrados)
             {
-                return true;
+                // Verifica se as credenciais são iguais ao do usuário
+                if (usuarioModel.Usuario.Equals(usuario) && usuarioModel.Senha.Equals(senha))
+                {   
+                    // Credenciais compatíveis
+                    return usuarioModel.Id;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return null; // Não encontrou nenhum usuário com as credenciais fornecidas
         }
         catch (Exception e)
         {
             Console.WriteLine("Erro tentar logar: " + e);
-            return false;
+            return null;
         }
     }
 
-    public void ExibirDados()
+    public UsuarioModel buscarUsuario(int? id)
     {
-        Console.WriteLine("Usuario: " + usuarioCadastrado.Usuario);
-        Console.WriteLine("Senha: " + usuarioCadastrado.Senha);
-        Console.WriteLine("Genero: " + usuarioCadastrado.Genero);
+        try
+        {
+            foreach (var usuario in usuariosCadastrados)
+            {
+                if (usuario.Id == id)
+                {
+                    return usuario;
+                }
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erro ao tentar exibir os dados: " + e);
+            return null;
+        }
+             
     }
 
-    public bool TrocarSenha(string senhaAtual)
+    public bool TrocarSenha(int? idUsuario, string senhaAtual)
     {
-        if (usuarioCadastrado.Senha == senhaAtual)
+        try
         {
-            Console.Write("Digite a nova senha: ");
-            usuarioCadastrado.Senha = Console.ReadLine();
-            return true;
-        }
-        else
-        {
+            foreach (var usuario in usuariosCadastrados)
+            {
+                if (usuario.Id == idUsuario && usuario.Senha.Equals(senhaAtual))
+                {
+                    Console.Write("Digite a nova senha: ");
+                    usuario.Senha = Console.ReadLine();
+                    return true;
+                }
+            }
             Console.WriteLine("Senha incorreta, tente novamente");
             return false;
         }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erro ao tentar trocar a senha: " + e);
+            return false;
+        }  
     }
 }

@@ -17,24 +17,26 @@ static void TelaLogin(UsuarioService usuarioService)
         switch (option)
         {
             case 1:
+                Console.Clear();
                 Console.Write("\nDigite o seu usuário: ");
                 string usuario = Console.ReadLine();
 
                 Console.Write("Digite sua senha: ");
                 string senha = Console.ReadLine();
-
-                bool response = usuarioService.Logar(usuario, senha);
-                if (response)
+                
+                int? idUsuario = usuarioService.Logar(usuario, senha);
+                if (idUsuario != null)
                 {
                     Console.WriteLine("Login efetuado com sucesso");
-                    TelaHome(usuarioService);
+                    TelaHome(usuarioService, idUsuario);
                 }
                 else
                 {
-                    Console.WriteLine("Usuario ou senha incorreto");
+                    Console.WriteLine("Usuario ou senha incorreto, tente novamente.");
                 }
                 break;
             case 2:
+                Console.Clear();
                 Console.Write("\nDigite o seu usuário: ");
                 usuario = Console.ReadLine();
                 Console.Write("Digite sua senha: ");
@@ -55,10 +57,11 @@ static void TelaLogin(UsuarioService usuarioService)
                         default: Console.WriteLine("Opção inválida, tente novamente"); continue;
                     }
                 } while (generoOption != 'M' && generoOption != 'F');
-                response = usuarioService.Cadastrar(usuario, senha, genero);
+                bool response = usuarioService.Cadastrar(usuario, senha, genero);
                 Console.WriteLine(response ? "Usuário cadastrado com sucesso" : "Erro ao tentar cadastrar");
                 break;
             case 3:
+                Console.Clear();
                 Console.WriteLine("Fim do programa");
                 System.Environment.Exit(0);
                 break;
@@ -66,7 +69,7 @@ static void TelaLogin(UsuarioService usuarioService)
     } while (option != 0);
 }
 
-static void TelaHome(UsuarioService usuarioService) {
+static void TelaHome(UsuarioService usuarioService, int? idUsuario) {
     int option;
     do
     {
@@ -81,20 +84,35 @@ static void TelaHome(UsuarioService usuarioService) {
         switch (option)
         {
             case 1:
-                usuarioService.ExibirDados();
+                Console.Clear();
+                UsuarioModel usuario = usuarioService.buscarUsuario(idUsuario);
+                if (usuario != null)
+                {
+                    Console.WriteLine("Usuário: " + usuario.Usuario);
+                    Console.WriteLine("Senha: " + usuario.Senha);
+                    Console.WriteLine("Gênero: " + usuario.Genero);
+                }
+                else
+                {
+                    Console.WriteLine("Usuário não encontrado.");
+                }
                 break;
             case 2:
                 bool response;
+
+                Console.Clear();
                 do
                 {
                     Console.Write("\nDigite a senha atual: ");
                     string senhaAtual = Console.ReadLine();
 
-                    response = usuarioService.TrocarSenha(senhaAtual);
+                    response = usuarioService.TrocarSenha(idUsuario, senhaAtual);
+                    Console.WriteLine(response ? "Senha trocada com sucesso." : "Erro ao tentar trocar a senha.");
                 } while (!response);
                 
                 break;
             case 3:
+                Console.Clear();
                 Console.WriteLine("Redirecioando a tela de login...");
                 TelaLogin(usuarioService);
                 break;
